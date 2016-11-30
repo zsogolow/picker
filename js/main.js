@@ -1,17 +1,41 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    function datePicker(date) {
+    window.datePicker = datePicker;
+
+    function datePicker(date, picker) {
         if (this === undefined || this === window) {
-            return new datePicker(date || new Date());
+            return new datePicker(date || new Date(), picker);
         }
 
-        var picker, calendar, nextMonth, prevMonth, dateInput;
+        var calendar, currentMonth, nextMonth, prevMonth, dateInput;
         try {
-            picker = document.getElementsByClassName('picker')[0];
-            calendar = picker.getElementsByClassName('calendar')[0];
+            // picker = document.getElementsByClassName('picker')[0];
+            while (picker.children.length > 1) {
+                picker.removeChild(picker.lastChild);
+            }
+
             dateInput = picker.getElementsByClassName('date-input')[0];
-            nextMonth = calendar.getElementsByClassName('next-month')[0];
-            prevMonth = calendar.getElementsByClassName('prev-month')[0];
+            calendar = document.createElement('div');
+            calendar.classList.add('calendar');
+            var monthContainer = document.createElement('div');
+            monthContainer.classList.add('month-container');
+            currentMonth = document.createElement('div');
+            currentMonth.classList.add('month');
+            nextMonth = document.createElement('div');
+            nextMonth.classList.add('next-month');
+            prevMonth = document.createElement('div');
+            prevMonth.classList.add('prev-month');
+            var daysInMonthContainer = document.createElement('div');
+            daysInMonthContainer.classList.add('days-in-month');
+
+            monthContainer.appendChild(prevMonth);
+            monthContainer.appendChild(currentMonth);
+            monthContainer.appendChild(nextMonth);
+
+            calendar.appendChild(monthContainer);
+            calendar.appendChild(daysInMonthContainer);
+
+            picker.insertBefore(calendar, picker.lastChildElement);
 
             dateInput.addEventListener('focus', showCalendar);
             dateInput.addEventListener('click', cancelHideCalendar);
@@ -36,45 +60,63 @@ document.addEventListener('DOMContentLoaded', function () {
             var daysInMonth = new Date(year, month + 1, 0).getDate();
             var lastDayInMonth = new Date(year, month + 1, 0).getDay();
 
+            var firstDayInMonthDate = new Date(year, month);
+            var lastDayInMonthDate = new Date(year, month + 1, 0);
+
             dateInput.value = date.toDateString();
 
-            calendar.getElementsByClassName('month')[0].innerHTML = getMonth(month) + " " + year;
-            calendar.getElementsByClassName('days-of-week')[0].innerHTML = '';
-            for (var i = 0; i < 7; i++) {
-                var dayDiv = document.createElement('div');
-                dayDiv.className = 'day-of-week';
-                dayDiv.innerHTML = getDay(i);
-                calendar.getElementsByClassName('days-of-week')[0].appendChild(dayDiv);
-            }
+            prevMonth.innerHTML = getMonth(month == 0 ? 11 : month - 1);
+            currentMonth.innerHTML = getMonth(month) + " " + year;
+            nextMonth.innerHTML = getMonth(month == 11 ? 0 : month + 1);
 
             var table = document.createElement('table');
-            var currentDay = 1;
+            var thead = document.createElement('thead');
+            var tr = document.createElement('tr');
+            for (var i = 0; i < 7; i++) {
+                var dayTh = document.createElement('th');
+                dayTh.className = 'day-of-week';
+                dayTh.innerHTML = getDay(i);
+                tr.appendChild(dayTh);
+            }
+            thead.appendChild(tr);
+            table.appendChild(thead);
+
+            var currentDay = firstDayInMonth * -1 + 1;
             for (var i = 0; i < 6; i++) { // height
                 var tr = document.createElement('tr');
                 tr.classList.add('week')
                 for (var j = 0; j < 7; j++) { // width
+                    // create the td
                     var td = document.createElement('td');
                     td.classList.add('day');
 
-                    if (year == date.getFullYear() &&
-                        month == date.getMonth() &&
-                        currentDay == date.getDate()) {
+                    var currentDateIteration = new Date(year, month, currentDay);
+
+                    // look to see if its the current date
+                    if (currentDateIteration.getFullYear() == date.getFullYear() &&
+                        currentDateIteration.getMonth() == date.getMonth() &&
+                        currentDateIteration.getDate() == date.getDate()) {
                         td.classList.add('today');
                     }
 
-                    (function (td) {
-                        td.dataset.date = (month + 1) + '/' + currentDay + '/' + year;
+                    // add event listener for click on date
+                    (function (td, date) {
+                        td.dataset.date = date.toDateString();
                         td.addEventListener('click', function () {
                             var newDate = new Date(this.dataset.date);
                             initCalendar(newDate.getFullYear(), newDate.getMonth(), newDate);
                             calendar.classList.remove('focused');
                         });
-                    })(td)
-                    if (i == 0 && j >= firstDayInMonth) {
-                        td.innerHTML = currentDay++;
-                    } else if (i > 0 && currentDay <= daysInMonth) {
-                        td.innerHTML = currentDay++;
+                    })(td, currentDateIteration)
+
+                    // check to see if the day is in the right month
+                    if (currentDay < firstDayInMonthDate.getDate() || currentDay > lastDayInMonthDate.getDate()) {
+                        td.classList.add('day-disabled');
                     }
+
+                    td.innerHTML = currentDateIteration.getDate();
+
+                    currentDay++;
 
                     tr.appendChild(td);
                 }
@@ -129,19 +171,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 case 1:
                     return 'Feb';
                 case 2:
-                    return 'March';
+                    return 'Mar';
                 case 3:
-                    return 'April';
+                    return 'Apr';
                 case 4:
                     return 'May';
                 case 5:
-                    return 'June';
+                    return 'Jun';
                 case 6:
-                    return 'July';
+                    return 'Jul';
                 case 7:
                     return 'Aug';
                 case 8:
-                    return 'Sept';
+                    return 'Sep';
                 case 9:
                     return 'Oct';
                 case 10:
@@ -175,5 +217,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    datePicker();
+    datePicker(new Date(), document.getElementsByClassName('picker')[0]);
+    datePicker(new Date(), document.getElementsByClassName('picker')[1]);
 });

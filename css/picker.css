@@ -1,0 +1,47 @@
+.picker {
+    position: relative;
+    display: inline-block;
+}
+
+.picker input[type=text] {}
+
+div.calendar {
+    font-size: 18px;
+    position: absolute;
+    left: 0;
+    border: 1px solid #CCCCCC;
+    display: none;
+}
+
+div.calendar.focused {
+    display: block;
+}
+
+div.calendar .month-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+div.calendar .month {}
+
+div.calendar .prev-month,
+div.calendar .next-month {
+    cursor: pointer;
+}
+
+div.calendar .days-in-month table {
+    width: 100%;
+}
+
+div.calendar .day {
+    min-width:32px;
+    cursor: pointer;
+}
+
+div.calendar .day-disabled {
+    color: #CCCCCC;
+}
+
+div.calendar .day.today {
+    background: #d3d3d3;
+}
