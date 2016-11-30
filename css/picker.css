@@ -20,6 +20,7 @@ div.calendar.focused {
 div.calendar .month-container {
     display: flex;
     justify-content: space-around;
+    padding-top: 2px;
 }
 
 div.calendar .month {}
@@ -27,10 +28,6 @@ div.calendar .month {}
 div.calendar .prev-month,
 div.calendar .next-month {
     cursor: pointer;
-}
-
-div.calendar .days-in-month table {
-    width: 100%;
 }
 
 div.calendar .day {

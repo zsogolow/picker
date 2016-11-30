@@ -213,7 +213,7 @@ function datePicker(date, input) {
     }
 }
 
-// document.addEventListener('DOMContentLoaded', function () {
-//     datePicker(new Date(), document.querySelectorAll('input[type=text]')[0]);
-//     datePicker(new Date(), document.querySelectorAll('input[type=text]')[1]);
-// });
+document.addEventListener('DOMContentLoaded', function () {
+    datePicker(new Date(), document.querySelectorAll('input[type=text]')[0]);
+    datePicker(new Date(), document.querySelectorAll('input[type=text]')[1]);
+});
