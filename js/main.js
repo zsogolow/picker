@@ -1,16 +1,24 @@
-function datePicker(date, input) {
+function datePicker(input, date) {
     if (this === undefined || this === window) {
-        return new datePicker(date || new Date(), input);
+        if (!input || !(input instanceof HTMLInputElement)) {
+            throw 'input required';
+        }
+
+        if (!date || !(date instanceof Date)) {
+            date = new Date();
+        }
+
+        return new datePicker(input, date);
     }
 
     var calendar, currentMonth, nextMonth, prevMonth, dateInput;
     try {
         picker = document.createElement('div');
         picker.classList.add('picker');
-        input.parentElement.insertBefore(picker, input);
-        input.parentElement.removeChild(input);
-        picker.appendChild(input);
-        dateInput = picker.getElementsByClassName('date-input')[0];
+        dateInput = input;
+        dateInput.parentElement.insertBefore(picker, dateInput);
+        dateInput.parentElement.removeChild(dateInput);
+        picker.appendChild(dateInput);
         calendar = document.createElement('div');
         calendar.classList.add('calendar');
         var monthContainer = document.createElement('div');
@@ -40,8 +48,7 @@ function datePicker(date, input) {
         prevMonth.addEventListener('click', decrementMonth);
 
     } catch (err) {
-        console.log(err);
-        // html is invalid, calendar is missing
+        throw err;
     }
 
     var currentDate = date;
@@ -214,6 +221,6 @@ function datePicker(date, input) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    datePicker(new Date(), document.querySelectorAll('input[type=text]')[0]);
-    datePicker(new Date(), document.querySelectorAll('input[type=text]')[1]);
+    var input = document.querySelectorAll('input[type=text]')[0];
+    datePicker(input, new Date());
 });
