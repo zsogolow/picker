@@ -1,3 +1,9 @@
+/**
+ * Date Picker
+ * 
+ * Required: Input element. <input type="text" />
+ * Optional: new Date() || date
+ */
 function datePicker(input, date) {
     if (this === undefined || this === window) {
         if (!input || !(input instanceof HTMLInputElement)) {
@@ -129,6 +135,9 @@ function datePicker(input, date) {
         calendar.getElementsByClassName('days-in-month')[0].appendChild(table);
     }
 
+    /**
+     * Event Handlers
+     */
     function hideCalendar() {
         console.log('hiding');
         calendar.classList.remove('focused');
@@ -167,6 +176,9 @@ function datePicker(input, date) {
         initCalendar(year, month, currentDate);
     }
 
+    /**
+     * Helpers
+     */
     function getMonth(monthIndex) {
         switch (monthIndex) {
             case 0:
